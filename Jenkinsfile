@@ -47,12 +47,6 @@ Rscript tests/test1.R
 '''
             }
         }
-        stage ('packages') {
-            steps {
-                sh "cd $WORKSPACE/build && make package"
-                archiveArtifacts allowEmptyArchive: true, artifacts: 'build/exageostat-*gz'
-            }
-        }
     }
 
     // Post build actions
