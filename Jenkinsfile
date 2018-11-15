@@ -29,6 +29,7 @@ module purge
 module load ecrc-extras
 module load mkl/2018-update-1
 module load gcc/5.5.0
+module load pcre
 module load r-base/3.5.1-mkl
 module load gsl/2.4-gcc-5.5.0
 module load nlopt/2.4.2-gcc-5.5.0
