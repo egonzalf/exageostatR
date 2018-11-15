@@ -30,18 +30,18 @@ then
     exit 1;
 fi
 
-if [ -n "$MKLROOT" ] && [ -d "$MKLROOT" ]; then
-    echo "mkl_dir directory exists!"
-    echo "Great... continue set-up"
-else
-    echo "MKLROOT Directory does not exist!... Please define and export MKLROOT variable"
-    exit 1
-fi
+## BLAS & LAPACK
+blaslibs=`R CMD config BLAS_LIBS`
+lapacklibs=`R CMD config LAPACK_LIBS`
+LA_LIBS=$(echo $lapacklibs $blaslibs|awk '{$1=$1};1') # Linear Algebra libs | remove trailing and leading spaces
+
+
+
 PREFIX=$SETUP_DIR
 
 
 echo 'The installation directory is '$SETUP_DIR
-echo 'The mkl root directory is '$MKLROOT
+echo "The BLAS and LAPACK are : $LA_LIBS"
 
 ############################## Check OS
 echo "Finding the current os type"
@@ -67,16 +67,13 @@ case "$osType" in
 esac
 
 #################################################
-export MKLROOT=$MKLROOT
-. $MKLROOT/bin/mklvars.sh intel64
-
-
 
 export PKG_CONFIG_PATH=$PREFIX/lib/pkgconfig:$PKG_CONFIG_PATH
+#export LD_LIBRARY_PATH=$PREFIX/lib:$LD_LIBRARY_PATH
 rpaths="-Wl,-rpath=$PREFIX/lib -Wl,-rpath=$PREFIX/libs -L$PREFIX/lib "
 echo "LDFLAGS += $rpaths " >> src/Makefile
 
-#*****************************************************************************
+###############################################################################
 set -e
 
 if [ $CURRENT_OS == "LINUX" ]
@@ -86,7 +83,18 @@ else
     export DYLD_LIBRARY_PATH=$PREFIX/lib:$DYLD_LIBRARY_PATH
 fi
 
-#*****************************************************************************install Nlopt
+###############################################################################install Nlopt
+if ! pkg-config --exists --atleast-version=3 lapacke
+then
+    cd $TMPDIR
+    wget http://www.netlib.org/lapack/lapack-3.8.0.tar.gz -O - | tar -zx
+    cd lapack-3.8.0
+    mkdir -p build && cd build
+    cmake .. -DCMAKE_INSTALL_PREFIX=$PREFIX -DBUILD_SHARED_LIBS=ON -DLAPACKE=ON -DLAPACKE_WITH_TMG=ON # -DUSE_OPTIMIZED_BLAS:BOOL=ON -DUSE_OPTIMIZED_LAPACK:BOOL=ON
+    make -j || make && make install
+fi
+
+###############################################################################install Nlopt
 if ! pkg-config --exists --atleast-version=2.4 nlopt
 then
     cd $TMPDIR
@@ -96,7 +104,7 @@ then
     make -j || make && make install
 fi
 
-#*****************************************************************************install gsl
+###############################################################################install gsl
 if ! pkg-config --exists --atleast-version=2 gsl
 then
     cd $TMPDIR
@@ -105,7 +113,7 @@ then
     ./configure --prefix=$PREFIX
     make -j || make && make install
 fi
-#*****************************************************************************install hwloc
+###############################################################################install hwloc
 if ! pkg-config --exists --atleast-version=1.11 hwloc
 then
     cd $TMPDIR
@@ -114,7 +122,7 @@ then
     ./configure --prefix=$PREFIX
     make -j || make && make install
 fi
-#*****************************************************************************install Starpu
+###############################################################################install Starpu
 if ! pkg-config --exists --atleast-version=1.2 libstarpu
 then
     cd $TMPDIR
@@ -124,7 +132,7 @@ then
     ./configure --disable-cuda --disable-opencl --prefix=$PREFIX
     make -j || make && make install
 fi
-#************************************************************************ Install Chameleon - Stars-H - HiCMA 
+########################################################################## Install Chameleon - Stars-H - HiCMA 
 #cd $TMPDIR && rm -rf $TMPDIR/exageostatR
 #git clone https://github.com/ecrc/exageostatR.git
 #cd exageostatR
@@ -141,13 +149,13 @@ make -j 20 || make VERBOSE=1 && make install
 cd $BASEDIR && cd src
 cd stars-h
 mkdir -p build && cd build
-cmake .. -DCMAKE_C_FLAGS=-fPIC -DMPI=OFF -DCMAKE_INSTALL_PREFIX=$PREFIX
+cmake .. -DCMAKE_C_FLAGS=-fPIC -DEXAMPLES=OFF -DTESTING=OFF -DMPI=OFF -DCMAKE_INSTALL_PREFIX=$PREFIX
 make -j 20 || make VERBOSE=1 && make install
 #cd $TMPDIR
 cd $BASEDIR && cd src
 cd hicma
 mkdir -p build && cd build
-cmake .. -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=$PREFIX
+cmake .. -DBUILD_SHARED_LIBS=ON -DHICMA_ENABLE_TESTING=OFF -DHICMA_ENABLE_TIMING=OFF -DCMAKE_INSTALL_PREFIX=$PREFIX
 make -j 20 || make VERBOSE=1 && make install
 #cd $TMPDIR
 #cd exageostatR && cd src
