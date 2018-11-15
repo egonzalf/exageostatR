@@ -26,7 +26,7 @@ done
 export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:$SETUP_DIR/lib/pkgconfig
 
 # StarPU
-if pkg-config --exists libstarpu
+if pkg-config --exists --atleast-version=1.2 libstarpu
 then
     _LOCATION=`pkg-config --variable=prefix libstarpu`
     echo "StarPU FOUND in [$_LOCATION]"
@@ -54,7 +54,7 @@ else
 fi
 
 # gsl
-if pkg-config --exists gsl
+if pkg-config --exists --atleast-version=2 gsl
 then
     _LOCATION=`pkg-config --variable=prefix gsl`
     echo "gsl FOUND in [$_LOCATION]"
@@ -68,7 +68,7 @@ else
 fi
 
 # nlopt
-if pkg-config --exists nlopt
+if pkg-config --exists --atleast-version=2.4 nlopt
 then
     _LOCATION=`pkg-config --variable=prefix nlopt`
     echo "nlopt FOUND in [$_LOCATION]"
@@ -82,7 +82,7 @@ else
 fi
 
 # hwloc
-if pkg-config --exists hwloc
+if pkg-config --exists --atleast-version=1.11 hwloc
 then
     _LOCATION=`pkg-config --variable=prefix hwloc`
     echo "hwloc FOUND in [$_LOCATION]"
@@ -97,7 +97,7 @@ fi
 
 
 # hicma
-if pkg-config --exists hicma
+if pkg-config --exists --atleast-version=0.1.1 hicma
 then
     _LOCATION=`pkg-config --variable=prefix hicma`
     echo "hicma FOUND in [$_LOCATION]"
@@ -111,7 +111,7 @@ else
 fi
 
 # starsh
-if pkg-config --exists starsh
+if pkg-config --exists --atleast-version=0.1.1 starsh
 then
     _LOCATION=`pkg-config --variable=prefix starsh`
     echo "starsh FOUND in [$_LOCATION]"
