@@ -87,7 +87,7 @@ fi
 if ! pkg-config --exists --atleast-version=3 lapacke
 then
     cd $TMPDIR
-    wget http://www.netlib.org/lapack/lapack-3.8.0.tar.gz -O - | tar -zx
+    wget -q http://www.netlib.org/lapack/lapack-3.8.0.tar.gz -O - | tar -zx
     cd lapack-3.8.0
     mkdir -p build && cd build
     cmake .. -DCMAKE_INSTALL_PREFIX=$PREFIX -DBUILD_SHARED_LIBS=ON -DLAPACKE=ON -DLAPACKE_WITH_TMG=ON # -DUSE_OPTIMIZED_BLAS:BOOL=ON -DUSE_OPTIMIZED_LAPACK:BOOL=ON
@@ -98,7 +98,7 @@ fi
 if ! pkg-config --exists --atleast-version=2.4 nlopt
 then
     cd $TMPDIR
-    wget http://ab-initio.mit.edu/nlopt/nlopt-2.4.2.tar.gz -O - | tar -zx
+    wget -q http://ab-initio.mit.edu/nlopt/nlopt-2.4.2.tar.gz -O - | tar -zx
     cd nlopt-2.4.2
     ./configure --enable-shared --without-guile --prefix=$PREFIX
     make -j || make && make install
@@ -108,7 +108,7 @@ fi
 if ! pkg-config --exists --atleast-version=2 gsl
 then
     cd $TMPDIR
-    wget https://ftp.gnu.org/gnu/gsl/gsl-2.4.tar.gz -O - | tar -zx
+    wget -q https://ftp.gnu.org/gnu/gsl/gsl-2.4.tar.gz -O - | tar -zx
     cd gsl-2.4
     ./configure --prefix=$PREFIX
     make -j || make && make install
@@ -117,7 +117,7 @@ fi
 if ! pkg-config --exists --atleast-version=1.11 hwloc
 then
     cd $TMPDIR
-    wget https://www.open-mpi.org/software/hwloc/v1.11/downloads/hwloc-1.11.5.tar.gz -O - | tar -zx
+    wget -q https://www.open-mpi.org/software/hwloc/v1.11/downloads/hwloc-1.11.5.tar.gz -O - | tar -zx
     cd hwloc-1.11.5
     ./configure --prefix=$PREFIX
     make -j || make && make install
@@ -126,9 +126,8 @@ fi
 if ! pkg-config --exists --atleast-version=1.2 libstarpu
 then
     cd $TMPDIR
-    wget http://starpu.gforge.inria.fr/files/starpu-1.2.5/starpu-1.2.5.tar.gz
-    tar -zxvf starpu-1.2.5.tar.gz
-    cd starpu-1.2.5
+    wget -q http://starpu.gforge.inria.fr/files/starpu-1.2.6/starpu-1.2.6.tar.gz -O - | tar -zx
+    cd starpu-1.2.6
     ./configure --disable-cuda --disable-opencl --prefix=$PREFIX
     make -j || make && make install
 fi
