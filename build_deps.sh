@@ -121,7 +121,7 @@ then
     wget http://starpu.gforge.inria.fr/files/starpu-1.2.5/starpu-1.2.5.tar.gz
     tar -zxvf starpu-1.2.5.tar.gz
     cd starpu-1.2.5
-    ./configure --disable-cuda --disable-opencl --prefix=$PREFIX
+    ./configure --disable-cuda --disable-opencl --disable-mpi-check --prefix=$PREFIX
     make -j || make && make install
 fi
 #************************************************************************ Install Chameleon - Stars-H - HiCMA 
@@ -135,7 +135,7 @@ cd src
 cd hicma
 cd chameleon
 mkdir -p build && cd build
-cmake .. -DCHAMELEON_USE_MPI=OFF -DCHAMELEON_ENABLE_EXAMPLE=OFF -DCHAMELEON_ENABLE_TESTING=OFF -DCHAMELEON_ENABLE_TIMING=OFF -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=$PREFIX
+cmake .. -DCHAMELEON_USE_MPI=ON -DCHAMELEON_ENABLE_EXAMPLE=OFF -DCHAMELEON_ENABLE_TESTING=OFF -DCHAMELEON_ENABLE_TIMING=OFF -DBUILD_SHARED_LIBS=ON -DCMAKE_INSTALL_PREFIX=$PREFIX
 make -j 20 || make VERBOSE=1 && make install
 #cd $TMPDIR
 cd $BASEDIR && cd src
@@ -147,7 +147,7 @@ make -j 20 || make VERBOSE=1 && make install
 cd $BASEDIR && cd src
 cd hicma
 mkdir -p build && cd build
-cmake .. -DBUILD_SHARED_LIBS=ON -DHICMA_ENABLE_TESTING=OFF -DHICMA_ENABLE_TIMING=OFF -DCMAKE_INSTALL_PREFIX=$PREFIX
+cmake .. -DBUILD_SHARED_LIBS=ON -DHICMA_ENABLE_TESTING=OFF -DHICMA_ENABLE_TIMING=OFF -DHICMA_USE_MPI=ON -DCMAKE_INSTALL_PREFIX=$PREFIX
 make -j 20 || make VERBOSE=1 && make install
 #cd $TMPDIR
 #cd exageostatR && cd src
