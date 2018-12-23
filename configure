@@ -8,6 +8,7 @@
 #VARIABLES
 BASEDIR=$(pwd)
 TMPDIR=$BASEDIR/_$$
+MPIVALUE='false'
 BUILD_DEPENDENCIES='true'
 err=0
 
